@@ -1,0 +1,721 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Swagger Bikestores - OpenAPI 3.0",
+    "description": "Description",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.11"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "https://bikestores.swagger.io/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "stores",
+      "description": "Everything about stores"
+    },
+    {
+      "name": "employees",
+      "description": "Everything about employees"
+    },
+    {
+      "name": "products",
+      "description": "Everything about products"
+    },
+    {
+      "name": "brands",
+      "description": "Filter by brand(s)"
+    },
+    {
+      "name": "categories",
+      "description": "Filter by categorie(s)"
+    },
+    {
+      "name": "year",
+      "description": "Filter by model year"
+    },
+    {
+      "name": "prices",
+      "description": "Filter by prices"
+    }
+  ],
+  "paths": {
+    "/stores": {
+      "get": {
+        "tags": [
+          "stores"
+        ],
+        "summary": "Returns all stores",
+        "description": "Read ...",
+        "operationId": "getAllStores",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Stores"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Stores not found"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/stores/{storeId}": {
+      "get": {
+        "tags": [
+          "stores"
+        ],
+        "summary": "Find store by ID",
+        "description": "Returns a single store",
+        "operationId": "getStoreById",
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "path",
+            "description": "ID of store to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stores"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Store not found"
+          }
+        }
+      }
+    },
+    "/employees": {
+      "get": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Returns all employees",
+        "description": "Read ...",
+        "operationId": "getAllEmployees",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Employees"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Employees not found"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/employees/{employeeId}": {
+      "get": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Find employee by ID",
+        "description": "Returns a single employee",
+        "operationId": "getEmployeeById",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "description": "ID of employee to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employees"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Employee not found"
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Returns all products",
+        "description": "Read ...",
+        "operationId": "getAllProducts",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Products"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Products not found"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/products/{productId}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Find product by ID",
+        "description": "Returns a single product",
+        "operationId": "getProductById",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "ID of product to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Products"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Store not found"
+          }
+        }
+      }
+    },
+    "/brands/{brandName}": {
+      "get": {
+        "tags": [
+          "brands"
+        ],
+        "summary": "Filter by a brand's name",
+        "description": "Read ...",
+        "operationId": "getAllProductsByBrand",
+        "parameters": [
+          {
+            "name": "brandName",
+            "in": "path",
+            "description": "Brand name to filter products returned",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Products"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Products not found"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/categories/{categoryName}": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Filter by a category's name",
+        "description": "Read ...",
+        "operationId": "getAllProductsByCategory",
+        "parameters": [
+          {
+            "name": "categoryName",
+            "in": "path",
+            "description": "Category name to filter products returned",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Products"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Products not found"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/year/{modelYear}": {
+      "get": {
+        "tags": [
+          "year"
+        ],
+        "summary": "Filter by a category's name",
+        "description": "Read ...",
+        "operationId": "getAllProductsByYear",
+        "parameters": [
+          {
+            "name": "modelYear",
+            "in": "path",
+            "description": "Model year to filter products returned",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Products"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Products not found"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/prices/{min}/{max}": {
+      "get": {
+        "tags": [
+          "prices"
+        ],
+        "summary": "Filter products by a minimum and maximum prices",
+        "description": "Read ...",
+        "operationId": "getAllProductsByMinMaxPrices",
+        "parameters": [
+          {
+            "name": "min",
+            "in": "path",
+            "description": "Price minimum of products",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "max",
+            "in": "path",
+            "description": "Price maximum of products",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Products"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Products not found"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/prices/{max}": {
+      "get": {
+        "tags": [
+          "prices"
+        ],
+        "summary": "Filter products by only a maximum price",
+        "description": "Read ...",
+        "operationId": "getAllProductsByMaxPrice",
+        "parameters": [
+          {
+            "name": "max",
+            "in": "path",
+            "description": "Price maximum of products",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Products"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Products not found"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Stores": {
+        "required": [
+          "store_id",
+          "store_name"
+        ],
+        "type": "object",
+        "properties": {
+          "store_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "store_name": {
+            "type": "string",
+            "example": "Santa Cruz Bikes"
+          },
+          "phone": {
+            "type": "string",
+            "example": "(831) 476-4321"
+          },
+          "email": {
+            "type": "string",
+            "example": "santacruz@bikes.shop"
+          },
+          "street": {
+            "type": "string",
+            "example": "3700 Portola Drive"
+          },
+          "city": {
+            "type": "string",
+            "example": "Santa Cruz"
+          },
+          "state": {
+            "type": "string",
+            "example": "CA"
+          },
+          "zip_code": {
+            "type": "string",
+            "example": 95060
+          }
+        }
+      },
+      "Employees": {
+        "required": [
+          "employee_id",
+          "employee_name",
+          "employee_email",
+          "employee_password",
+          "employee_role"
+        ],
+        "type": "object",
+        "properties": {
+          "employee_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "store_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "items": {
+              "$ref": "#/components/schemas/Stores"
+            }
+          },
+          "employee_name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "employee_email": {
+            "type": "string",
+            "example": "johndoe@bikestore.com"
+          },
+          "employee_password": {
+            "type": "string",
+            "example": "KQ,wDqd9iGtt"
+          },
+          "employee_role": {
+            "type": "string",
+            "example": "employee"
+          }
+        }
+      },
+      "Products": {
+        "required": [
+          "product_id",
+          "product_name",
+          "brand_id",
+          "category_id",
+          "model_year",
+          "list_price"
+        ],
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "product_name": {
+            "type": "string",
+            "example": "Trek 820 - 2016"
+          },
+          "brand_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 9,
+            "items": {
+              "$ref": "#/components/schemas/Brands"
+            }
+          },
+          "category_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 6,
+            "items": {
+              "$ref": "#/components/schemas/Categories"
+            }
+          },
+          "model_year": {
+            "type": "integer",
+            "format": "int64",
+            "example": 2016
+          },
+          "list_price": {
+            "type": "number",
+            "example": 379.99
+          }
+        }
+      },
+      "Stocks": {
+        "required": [
+          "stock_id"
+        ],
+        "type": "object",
+        "properties": {
+          "stock_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "store_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "items": {
+              "$ref": "#/components/schemas/Stores"
+            }
+          },
+          "product_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "items": {
+              "$ref": "#/components/schemas/Products"
+            }
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int64",
+            "example": 27
+          }
+        }
+      },
+      "Brands": {
+        "required": [
+          "brand_id",
+          "brand_name"
+        ],
+        "type": "object",
+        "properties": {
+          "brand_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "brand_name": {
+            "type": "string",
+            "example": "Electra"
+          }
+        }
+      },
+      "Categories": {
+        "required": [
+          "category_id",
+          "category_name"
+        ],
+        "type": "object",
+        "properties": {
+          "category_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "catgory_name": {
+            "type": "string",
+            "example": "Comfort Bicycles"
+          }
+        }
+      }
+    }
+  }
+}

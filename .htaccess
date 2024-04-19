@@ -1,0 +1,179 @@
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+</IfModule>
+
+Allow From All
+Satisfy Any
+Options FollowSymLinks
+RewriteEngine On
+
+# Page d'accueil
+RewriteRule ^bikestores/?$ bikestores.php
+
+# ------------------------------------------------------------
+
+# products/
+RewriteRule ^products/?$ bikestores.php?action=getProductsList&sort_column=product_id&sort_order=ASC
+RewriteRule ^products/(.+)/(ASC|DESC)/?$ bikestores.php?action=getProductsList&sort_column=$1&sort_order=$2
+
+# products/{product_id}
+RewriteRule ^products/([0-9]+)/?$ bikestores.php?action=getProductById&id=$1
+# products/{product_id}/{attribute of Entity=product_name,brand,category,model_year or list_price}
+RewriteRule ^products/([0-9]+)/(.+)/?$ bikestores.php?action=getProductDetail&id=$1&detail=$2
+
+# 1 Filter
+# filter-brand/{brand_name}
+RewriteRule ^filter-brand/(.+)/?$ bikestores.php?action=getProductsByBrand&brand_name=$1
+# filter-category/{category_name}
+RewriteRule ^filter-category/(.+)/?$ bikestores.php?action=getProductsByCategory&category_name=$1
+# filter-year/{model_year}
+RewriteRule ^filter-year/([0-9]+)/?$ bikestores.php?action=getProductsByYear&model_year=$1
+# filter-prices/{min}/{max}
+RewriteRule ^filter-prices/([0-9]+)/([0-9]+)/?$ bikestores.php?action=getProductsByPrices&min=$1&max=$2
+
+# Multiple filters
+# custom-filter/{brand_name}/{category_name}/{model_year}/{list_price_min}/{list_price_max}
+RewriteRule ^custom-filter/(.+)/(.+)/([0-9]+)/([0-9]+)/([0-9]+)/?$ bikestores.php?action=getProductsFiltered&brand_name=$1&category_name=$2&model_year=$3&min=$4&max=$5
+
+
+
+# ------------------------------------------------------------
+
+# employees/
+RewriteRule ^employees/?$ bikestores.php?action=getEmployeesList&sort_column=employee_id&sort_order=ASC
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^employees/(.+)/(ASC|DESC)/?$ bikestores.php?action=getEmployeesList&sort_column=$1&sort_order=$2
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^employees/(.+)/(.+)/?$ bikestores.php?action=getEmployeeCredentials&employee_email=$1&employee_password=$2
+
+# employees-store/{store_name}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^employees-store/(.+)/?$ bikestores.php?action=getEmployeesByStore&store_name=$1
+
+# employees-role/{employee_role}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^employees-role/(.+)/?$ bikestores.php?action=getEmployeesByRole&employee_role=$1
+
+# employees-store-role/{store_name}/{employee_role}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^employees-store-role/(.+)/(.+)/?$ bikestores.php?action=getEmployeesByStoreByRole&store_name=$1&employee_role=$2
+
+# employees/{employee_id}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^employees/([0-9]+)/?$ bikestores.php?action=getEmployeeById&id=$1
+# employees/{employee_id}/{attribute of Entity=store,employee_email,employee_password, employee_role}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^employees/([0-9]+)/(.+)/?$ bikestores.php?action=getEmployeeDetail&id=$1&detail=$2
+
+#PUT
+RewriteCond %{REQUEST_METHOD} ^PUT$
+RewriteRule ^employees/([0-9]+)/(.+)/(.+)/(.+)/?$ bikestores.php?action=updateEmployee&id=$1&employee_name=$2&employee_email=$3&employee_password=$4
+
+# ------------------------------------------------------------
+
+# GET
+# brands/
+RewriteRule ^brands/?$ bikestores.php?action=getBrandsList&sort_column=brand_id&sort_order=ASC
+RewriteRule ^brands/(.+)/(ASC|DESC)/?$ bikestores.php?action=getBrandsList&sort_column=$1&sort_order=$2
+
+# brands/{brand_id}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^brands/([0-9]+)/?$ bikestores.php?action=getBrandById&id=$1
+# brands/{brand_id}/{attribute of Entity=brand_name}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^brands/([0-9]+)/(.+)/?$ bikestores.php?action=getBrandDetail&id=$1&detail=$2
+
+# POST
+# brands/{brand_name}
+RewriteCond %{REQUEST_METHOD} ^POST$
+RewriteRule ^brands/(.+)/?$ bikestores.php?action=createBrand&brand_name=$1
+
+# PUT
+# brands/{brand_id}/{attribute of Entity=brand_name}
+RewriteCond %{REQUEST_METHOD} ^PUT$
+RewriteRule ^brands/([0-9]+)/(.+)/?$ bikestores.php?action=updateBrand&id=$1&brand_name=$2
+
+# DELETE
+# brands/{brand_id}
+RewriteCond %{REQUEST_METHOD} ^DELETE$
+RewriteRule ^brands/([0-9]+)/?$ bikestores.php?action=deleteBrand&id=$1
+
+# ------------------------------------------------------------
+
+# GET
+# categories/
+RewriteRule ^categories/?$ bikestores.php?action=getCategoriesList&sort_column=category_id&sort_order=ASC
+RewriteRule ^categories/(.+)/(ASC|DESC)/?$ bikestores.php?action=getCategoriesList&sort_column=$1&sort_order=$2
+
+# categories/{category_id}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^categories/([0-9]+)/?$ bikestores.php?action=getCategoryById&id=$1
+# categories/{category_id}/{attribute of Entity=category_name}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^categories/([0-9]+)/(.+)/?$ bikestores.php?action=getCategoryDetail&id=$1&detail=$2
+
+# POST
+# categories/{category_name}
+RewriteCond %{REQUEST_METHOD} ^POST$
+RewriteRule ^categories/(.+)/?$ bikestores.php?action=createCategory&category_name=$1
+
+# PUT
+# categories/{category_id}/{attribute of Entity=category_name}
+RewriteCond %{REQUEST_METHOD} ^PUT$
+RewriteRule ^categories/([0-9]+)/(.+)/?$ bikestores.php?action=updateCategory&id=$1&category_name=$2
+
+# DELETE
+# categories/{category_id}
+RewriteCond %{REQUEST_METHOD} ^DELETE$
+RewriteRule ^categories/([0-9]+)/?$ bikestores.php?action=deleteCategory&id=$1
+
+# ------------------------------------------------------------
+
+# stores/
+RewriteRule ^stores/?$ bikestores.php?action=getStoresList&sort_column=store_id&sort_order=ASC
+RewriteRule ^stores/(.+)/(ASC|DESC)/?$ bikestores.php?action=getStoresList&sort_column=$1&sort_order=$2
+
+# stores/{store_id}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^stores/([0-9]+)/?$ bikestores.php?action=getStoreById&id=$1
+# stores/{store_id}/{attribute of Entity=store_name,phone,email,street,city,state or zip_code}
+RewriteCond %{REQUEST_METHOD} ^GET$
+RewriteRule ^stores/([0-9]+)/(.+)/?$ bikestores.php?action=getStoreDetail&id=$1&detail=$2
+
+
+# POST
+# stores/{store_name}/...
+RewriteCond %{REQUEST_METHOD} ^POST$
+RewriteRule ^stores/(.+)/(.+)/(.+)/(.+)/(.+)/(.+)/([0-9]+)/?$ bikestores.php?action=createStore&store_name=$1&phone=$2&email=$3&street=$4&city=$5&state=$6&zip_code=$7
+
+# PUT
+# stores/{store_id}/{store_name}/...
+RewriteCond %{REQUEST_METHOD} ^PUT$
+RewriteRule ^stores/([0-9]+)/(.+)/(.+)/(.+)/(.+)/(.+)/(.+)/([0-9]+)/?$ bikestores.php?action=updateStore&id=$1&store_name=$2&phone=$3&email=$4&street=$5&city=$6&state=$7&zip_code=$8
+
+# DELETE
+# stores/{store_id}
+RewriteCond %{REQUEST_METHOD} ^DELETE$
+RewriteRule ^stores/([0-9]+)/?$ bikestores.php?action=deleteStore&id=$1
+
+# ------------------------------------------------------------
+
+#stocks/
+RewriteRule ^stocks/?$ bikestores.php?action=getStocksList&sort_column=store_id&sort_order=ASC
+RewriteRule ^stocks/(.+)/(ASC|DESC)/?$ bikestores.php?action=getStocksList&sort_column=$1&sort_order=$2
+
+# stocks-product/{product_name}
+RewriteRule ^stocks-product/(.+)/?$ bikestores.php?action=getStocksByProduct&product_name=$1
+
+# stocks-store/{store_name}
+RewriteRule ^stocks-store/(.+)/?$ bikestores.php?action=getStocksByStore&store_name=$1
+
+# stocks-product-store/{product_name}/{store_name}
+RewriteRule ^stocks-product-store/(.+)/(.+)/?$ bikestores.php?action=getStocksByProductByStore&product_name=$1&store_name=$2
+
+# stocks/{store_id}
+RewriteRule ^stocks/([0-9]+)/?$ bikestores.php?action=getStockById&id=$1
+# stocks/{store_id}/{attribute of Entity=store_name,product_name or quantity}
+RewriteRule ^stocks/([0-9]+)/(.+)/?$ bikestores.php?action=getStockDetail&id=$1&detail=$2

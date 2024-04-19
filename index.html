@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bikestores website</title>
+      
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+  
+    <script src="scriptIndex.js"></script>
+    <script>
+
+      // URL du service web
+      const apiUrl = 'https://api.bigdatacloud.net/data/client-ip';
+      const apiUrl2 = 'https://api.apibundle.io/ip-lookup?apikey=7208c4db8cf54289a761ee20a754c6af&ip=';
+      
+      window.onload = function(){
+        fetchIP(apiUrl, initMap);
+      };
+      
+      // Nous initialisons une liste de marqueurs
+      var villes = {
+          "Santa Cruz": { "lat": 36.963174015732, "lon": -121.968228976227 },
+          "Rowlett": { "lat": 32.8964864, "lon": -96.5536597 },
+          "Baldwin": { "lat": 38.185006675204, "lon": -89.846152970709 }
+      }
+
+      var macarte = null;
+
+      function initMap(lat, long, city) {
+        // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
+        macarte = L.map('map').setView([39.738453, -54.984853], 2);
+        // Leaflet ne récupère pas les cartes (tiles) sur un serveur par défaut. Nous devons lui préciser où nous souhaitons les récupérer. Ici, openstreetmap.fr
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+          // Il est toujours bien de laisser le lien vers la source des données
+          attribution: 'données © OpenStreetMap/ODbL - rendu OSM France',
+          minZoom: 1,
+          maxZoom: 20
+        }).addTo(macarte);
+        // Nous parcourons la liste des villes
+        for (ville in villes) {
+          var marker = L.marker([villes[ville].lat, villes[ville].lon]).addTo(macarte);
+          // Nous ajoutons la popup. A noter que son contenu (ici la variable ville) peut être du HTML
+          marker.bindPopup(ville);
+        }
+        var marker = L.marker([lat, long]).addTo(macarte);
+        marker.bindPopup(city);
+      }
+
+      // Appel du service web avec Fetch
+      let urlRequest ;
+
+      function fetchIP(apiUrl, initMap){
+        fetch(apiUrl)
+            .then(response => {
+                // Vérification de la réponse HTTP
+                if (!response.ok) {
+                    throw new Error('La requête a échoué');
+                }
+                // Analyse de la réponse JSON
+                return response.json();
+            })
+            .then(data => {
+                // Utilisation des données reçues
+                urlRequest = apiUrl2 + data.ipString ;
+                fetch(urlRequest)
+                  .then(response => {
+                    // Vérification de la réponse HTTP
+                    if (!response.ok) {
+                        throw new Error('La requête a échoué');
+                    }
+                    // Analyse de la réponse JSON
+                    return response.json();
+                    })
+                  .then(data => {
+                    initMap(data.latitude,data.longitude, data.city.name);
+                  })
+                  .catch(error => {
+                      // Gestion des erreurs
+                      console.error('Erreur lors de la récupération des données:', error);
+                  });
+            })
+        .catch(error => {
+            // Gestion des erreurs
+            console.error('Erreur lors de la récupération des données:', error);
+        });
+      }
+
+    </script>
+
+  </head>
+  <body>
+
+  <!-- As a website name -->
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid" height="75">
+        <a class="navbar-brand" href="#">
+            <img src="bannerEdit.jpg" class="container-fluid">
+        </a>
+        <span class="navbar-brand mb-0 h1"><h3 class="display-3">Bikestores</h3><small>Stores & products</small></span></h1>
+        
+    </div>
+  </nav>
+
+  <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Stores & products</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="brands.html">Brands</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="categories.html">Categories</a>
+          </li>
+          </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- Map and géoloc of user IP -->
+  <div class="grid text-center">
+    <br><a class="btn btn-primary" href="log.html">LOG IN</a>
+    <div class="g-col-6">
+      <br>
+        <div class="container">
+            <div class="card">
+                <div id="map" style="height: 400px;"></div>
+                <div class="card-body">
+                  <!-- 1 item = 1 store -->
+                  <div class="container">
+                    <b>Click on the GPS markers to find out in which city the bike store is located or your location</b><br><br>
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            SANTA CRUZ
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                            <div class="accordion-body" id="SCB"></div>
+                        </div>
+                        </div>
+                        <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            BALDWIN
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body" id="BB"></div>
+                        </div>
+                        </div>
+                        <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            ROWLETT
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                          <div class="accordion-body" id="RB"></div>
+                        </div>
+                        </div>
+                          </div>
+                    </div>
+
+
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="container">
+      <div class="card">
+        <div class="container">
+        <br>
+        <h3><b>Filter by</b></h3>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="radioFilter" id="inlineRadio1" value="one" checked>
+          <label class="form-check-label" for="inlineRadio1">One</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="radioFilter" id="inlineRadio2" value="all">
+          <label class="form-check-label" for="inlineRadio1">All</label>
+        </div><br>
+
+        <select class="form-select" aria-label="Default select example" id="filterBrand">
+          <option selected disabled> -- Filter by a brand -- </option>
+        </select>
+        <br><select class="form-select" aria-label="Default select example" id="filterCategory">
+          <option selected disabled> -- Filter by a category -- </option>
+        </select>
+
+          <br><div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Model year</span>
+            <input type="number" class="form-control" placeholder="2018" aria-label="year" aria-describedby="basic-addon1" id="filterYear">
+          </div>
+    
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">Price minimum</span>
+            <input type="number" class="form-control" value="0" id="filterPriceMin">
+            <span class="input-group-text">$</span>
+          </div>
+
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">Price maximum</span>
+            <input type="number" class="form-control" placeholder="1000" id="filterPriceMax">
+            <span class="input-group-text">$</span>
+          </div>
+          <button type="button" class="btn btn-link" id="resetButton">Reset</button>
+          <button type="button" class="btn btn-link" id="filterBy">Apply</button>
+      </div>
+      <div id="FilterBox"></div>
+    </div>
+    </div>
+
+    <br>
+        <div class="container">
+          <div class="card">
+            <div class="container">
+            <br><h3><b>Sort by </b></h3>
+
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSort" id="inlineRadio1" value="product_name">
+                <label class="form-check-label" for="inlineRadio1">Product name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSort" id="inlineRadio2" value="brand">
+                <label class="form-check-label" for="inlineRadio2">Brand name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSort" id="inlineRadio1" value="category">
+                <label class="form-check-label" for="inlineRadio1">Category name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSort" id="inlineRadio2" value="model_year">
+                <label class="form-check-label" for="inlineRadio2">Model year</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSort" id="inlineRadio1" value="list_price">
+                <label class="form-check-label" for="inlineRadio1">List price</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSort" id="inlineRadio1" value="product_id" checked>
+                <label class="form-check-label" for="inlineRadio1">Default</label>
+              </div>
+
+            <div class="container">
+                <div class="form-check">
+                  <div>
+                    <hr><input class="form-check-input" type="radio" name="radioOrder" value="ASC" id="ASC" checked>
+                    <label class="form-check-label" for="flexRadioDefault1">
+                      Ascending order
+                    </label>
+                  </div>
+                  <div>
+                    <input class="form-check-input" type="radio" name="radioOrder" id="DESC" value="DESC">
+                    <label class="form-check-label" for="flexRadioDefault2">
+                      Descending order
+                    </label>
+                  </div>
+                  <button type="button" class="btn btn-link" id="resetButton2">Reset</button>
+                  <button type="button" class="btn btn-link" id="sortBy">Apply</button>
+                </div>
+                <div id="SortBox"></div>
+              </div>
+            </div>
+            </div>
+          </div>
+
+    <br><br><div class="container">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Product name</th>
+            <th scope="col">Brand</th>
+            <th scope="col">Category</th>
+            <th scope="col">Model year</th>
+            <th scope="col">Price</th>
+          </tr>
+        </thead>
+        <tbody id="productsTable">
+      </table>
+    </div>
+    <br><button type="button" class="btn btn-primary" id="previousButton">Previous</button>
+    <button type="button" class="btn btn-primary" id="nextButton">Next</button><br><br>
+
+    <br><br><br>
+  <div class="grid text-center">
+    <!-- Footer -->
+    <div class="container">
+      <hr><br>
+      <footer class="site-footer">
+          <div class="container">
+          <div class="row">
+              <div class="col-sm-12 col-md-6">
+              <h6>About</h6>
+              <p class="text-justify">Matéï Biaou ... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Veniam alias inventore, aliquid iure, quasi voluptates voluptatem distinctio explicabo qui voluptatibus tempora consequatur saepe ratione mollitia. Impedit error ipsa officia neque.</p>
+              </div>
+  
+              <div class="col-xs-6 col-md-3">
+              <h6>Sitemap</h6>
+              <ul class="footer-links">
+                <li><a href="#">Stores & products</a></li>
+                <li><a href="brands.html">Brands</a></li>
+                <li><a href="categories.html">Categories</a></li>
+                <li><a href="log.html">LOG IN</a></li>
+              </ul>
+              </div>
+  
+              <div class="col-xs-6 col-md-3">
+              <h6>Quick Links</h6>
+              <ul class="footer-links">
+                  <li><a href="#">Web host</a></li>
+                  <li><a href="#">Repository Github of web service</a></li>
+                  <li><a href="#">Repository Github of website</a></li>
+                  <li><a href="legal.html">Legal notices</a></li>
+              </ul>
+              </div>
+          </div>
+        </div>
+        <br><br>
+      </footer>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+
+</body>
+</html>

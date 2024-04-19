@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Intranet</title>
+        
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+  
+    <script>
+      $(document).ready(function() {
+
+        // COOKIE
+
+        // Fonction pour définir un cookie
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+
+        // Fonction pour récupérer la valeur d'un cookie
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1, c.length);
+                }
+                if (c.indexOf(nameEQ) === 0) {
+                    return c.substring(nameEQ.length, c.length);
+                }
+            }
+            return null;
+        }
+
+        // Fonction pour effacer un cookie
+        function eraseCookie(name) {   
+            document.cookie = name+'=; Max-Age=-99999999;';  
+        }
+
+        // Fonction pour enregistrer les informations de connexion dans un cookie
+        function saveLoginInfo(email, password) {
+            setCookie('userEmail', email, 30); // 30 jours d'expiration
+            setCookie('userPassword', password, 30); // 30 jours d'expiration
+        }
+
+        // Fonction pour charger les informations de connexion depuis les cookies
+        function loadLoginInfo() {
+            var email = getCookie('userEmail');
+            var password = getCookie('userPassword');
+            if (email && password) {
+                // Charger les informations dans les champs de formulaire
+                $('#email').val(email);
+                $('#mdp').val(password);
+            }
+        }
+
+        loadLoginInfo();
+
+        // END COOKIE
+
+
+        $('#loginForm').submit(function(event) {
+            event.preventDefault();
+
+            var email = $('#email').val();
+            var password = $('#mdp').val();
+            var apiKey = $('#apiKey').val();
+
+            if (email.trim() === '' || password.trim() === '' || apiKey.trim() === '') {
+              var errorBox = $("<div>").text('One field at least is null.').css({
+                    "background-color": "red",
+                    "color": "white",
+                    "padding": "10px",
+                    "margin": "10px"
+                  });
+                  $('#loginMessage').append(errorBox);
+                return;
+            } else {
+              $.ajax({
+                url: "http://localhost:8888/bikestores/employees/"+email+"/"+password,
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                  if (response[0] !== undefined) {
+                    var isChecked = $('#dropdownCheck').is(':checked');
+                    if (isChecked){
+                      saveLoginInfo(email, password);
+                    }
+                    window.location.href = "intranet.html?employee_id=" + response[0].employee_id;
+                  } else {
+                    var errorMessage = response.status_message ;
+                    var errorBox = $("<div>").text(errorMessage).css({
+                      "background-color": "red",
+                      "color": "white",
+                      "padding": "10px",
+                      "margin": "10px"
+                    });
+                    $("#loginMessage").append(errorBox);
+                  }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Erreur lors de la requête AJAX :", textStatus, errorThrown);
+                }
+              });
+
+              if ( apiKey != "e8f1997c763"){
+                var errorBox = $("<div>").text('API Key denied').css({
+                      "background-color": "red",
+                      "color": "white",
+                      "padding": "10px",
+                      "margin": "10px"
+                    });
+                    $('#loginMessage').append(errorBox);
+                  return;
+              }
+            }
+        });
+});
+
+    </script>
+  </head>
+<body>
+
+      <!-- As a website name -->
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid" height="75">
+        <a class="navbar-brand" href="#">
+            <img src="bannerEdit.jpg" class="container-fluid">
+        </a>
+        <span class="navbar-brand mb-0 h1"><h3 class="display-3">Bikestores</h3></span></h1>
+    </div>
+  </nav>
+
+  <div class="position-relative">
+    <div class="position-absolute top-0 start-50 translate-middle-x">
+      <br><a class="btn btn-primary" href="index.html">Return to home page</a>
+    </div>
+  </div>
+
+    <br><br><br><br><div class="container">
+        <div class="card">
+            <h5 class="card-header">Log in for employees only</h5>
+            <div class="card-body">
+                <!-- Log in for employees -->
+                <div class="container-sm" style="width : 80%;">
+                    <form class="px-4 py-3" id="loginForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="email" placeholder="email@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mdp" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="mdp" placeholder="Password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apiKey" class="form-label">API key</label>
+                        <input type="api_key" class="form-control" id="apiKey" placeholder="e8f1997c763">
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="dropdownCheck" name="dropdownCheck" checked>
+                        <label class="form-check-label" for="dropdownCheck">
+                            Remember me thanks to cookie
+                        </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign in</button>
+                    <div id="loginMessage"></div>
+                  </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+  <div class="grid text-center">
+    <!-- Footer -->
+    <div class="container">
+      <hr><br>
+      <footer class="site-footer">
+          <div class="container">
+          <div class="row">
+              <div class="col-sm-12 col-md-6">
+              <h6>About</h6>
+              <p class="text-justify">Matéï Biaou ... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Veniam alias inventore, aliquid iure, quasi voluptates voluptatem distinctio explicabo qui voluptatibus tempora consequatur saepe ratione mollitia. Impedit error ipsa officia neque.</p>
+              </div>
+  
+              <div class="col-xs-6 col-md-3">
+              <h6>Sitemap</h6>
+              <ul class="footer-links">
+                <li><a href="index.html">Stores & products</a></li>
+                <li><a href="brands.html">Brands</a></li>
+                <li><a href="categories.html">Categories</a></li>
+                <li><a href="#">LOG IN</a></li>
+              </ul>
+              </div>
+  
+              <div class="col-xs-6 col-md-3">
+              <h6>Quick Links</h6>
+              <ul class="footer-links">
+                  <li><a href="#">Web host</a></li>
+                  <li><a href="#">Repository Github of web service</a></li>
+                  <li><a href="#">Repository Github of website</a></li>
+                  <li><a href="legal.html">Legal notices</a></li>
+              </ul>
+              </div>
+          </div>
+        </div>
+        <br><br>
+      </footer>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+</html>

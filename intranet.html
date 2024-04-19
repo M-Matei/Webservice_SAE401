@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bikestores back-office</title>
+      
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+
+    <script src="brandsIntranet.js"></script>
+    <script src="categoriesIntranet.js"></script>
+    <script src="storesIntranet.js"></script>
+    <script src="productsIntranet.js"></script>
+
+  </head>
+
+  <script>
+
+    function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for(var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) === ' ') {
+              c = c.substring(1, c.length);
+          }
+          if (c.indexOf(nameEQ) === 0) {
+              return c.substring(nameEQ.length, c.length);
+          }
+      }
+      return null;
+    }
+
+    var loggedIn = getCookie("userEmail");
+    if (loggedIn === null) {
+      window.location.href = "log.html";
+    }
+  </script>
+<body>
+
+    <!-- As a website name -->
+    <nav class="navbar bg-body-tertiary">
+      <div class="container-fluid" height="75">
+          <a class="navbar-brand" href="#">
+              <img src="bannerEdit.jpg" class="container-fluid">
+          </a>
+          <span class="navbar-brand mb-0 h1"><h3 class="display-3">Bikestores back-office</h3></span></h1>
+      </div>
+    </nav>
+
+  <!-- 1 Tab = 1 page -->
+  <div class="card text-center">
+    <div class="card-header">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="manual-tab" data-bs-toggle="tab" data-bs-target="#manual-tab-pane" type="button" role="tab" aria-controls="manual-tab-pane" aria-selected="true">MANUAL</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="products-tab" data-bs-toggle="tab" data-bs-target="#products-tab-pane" type="button" role="tab" aria-controls="products-tab-pane" aria-selected="false">Products</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="brands-tab" data-bs-toggle="tab" data-bs-target="#brands-tab-pane" type="button" role="tab" aria-controls="brands-tab-pane" aria-selected="false">Brands</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories-tab-pane" type="button" role="tab" aria-controls="categories-tab-pane" aria-selected="false">Categories</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="stores-tab" data-bs-toggle="tab" data-bs-target="#stores-tab-pane" type="button" role="tab" aria-controls="stores-tab-pane" aria-selected="false">Stores</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="stocks-tab" data-bs-toggle="tab" data-bs-target="#stocks-tab-pane" type="button" role="tab" aria-controls="stocks-tab-pane" aria-selected="false">Stocks</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="employees-tab" data-bs-toggle="tab" data-bs-target="#employees-tab-pane" type="button" role="tab" aria-controls="employees-tab-pane" aria-selected="false">Employees</button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="manual-tab-pane" role="tabpanel" aria-labelledby="manual-tab" tabindex="0">
+          <div class="card-body">
+            <h5 class="card-title">Handbook to employees</h5>
+            <p class="card-text">Quick resume and link to PDF</p>
+            <a class="btn btn-secondary" href="index.html" id="removeCookie">Log out</a>
+            
+            <script>
+
+              function eraseCookie(name) {   
+                document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+              }
+
+              document.getElementById("removeCookie").addEventListener("click", () => {
+                  eraseCookie("userEmail");
+                  eraseCookie("userPassword");
+              });
+
+            </script>
+
+            <br><br><br><div class="container" id="">
+              <div class="row g-2">
+                <div class="col-md">
+                  <h4><b>Modify my login details</b></h4>
+                  <div class="form-floating">
+                    <input type="text" class="form-control" id="empName" placeholder="John Doe">
+                    <label for="floatingInputGrid">Employee name</label>
+                  </div>
+                  <div class="form-floating">
+                    <input type="email" class="form-control" id="empEmail" placeholder="johndoe@bikestore.com">
+                    <label for="floatingInputGrid">Employee email</label>
+                  </div>
+                  <div class="form-floating">
+                    <input type="text" class="form-control" id="empPassword" placeholder="*">
+                    <label for="floatingInputGrid">Employee password</label>
+                  </div>
+                </div>
+                <br><button type="button" class="btn btn-primary" id="empApply">Apply</button>
+              <div id="modifEmployee"></div>
+              </div>
+            </div>
+          </div>        
+        </div>
+
+        <script>
+
+          function getParameterByName(name, url) {
+              if (!url) url = window.location.href;
+              name = name.replace(/[\[\]]/g, "\\$&");
+              var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                  results = regex.exec(url);
+              if (!results) return null;
+              if (!results[2]) return '';
+              return decodeURIComponent(results[2].replace(/\+/g, " "));
+          }
+
+          document.getElementById("empApply").addEventListener("click", () => {
+            var newName = $("#empName").val();
+            var newEmail = $("#empEmail").val();
+            var newPassword = $("#empPassword").val();
+            var urlRequest = "http://localhost:8888/bikestores/employees/"+ getParameterByName('employee_id')+"/"
+              +encodeURIComponent(newName.replace(/ /g, "%20")) + "/"
+              +encodeURIComponent(newEmail.replace(/ /g, "%20")) + "/"
+              +encodeURIComponent(newPassword.replace(/ /g, "%20"));
+
+            $.ajax({
+                url: decodeURIComponent(urlRequest.replace(/%20/g, " ")),
+                type: "PUT",
+                dataType: "json",
+                success: function(response) {                
+                    if (response !== null) {
+                        var successBox = $("<div>").text(response.status_message).css({
+                            "background-color": "green",
+                            "color": "white",
+                            "padding": "10px",
+                            "margin": "10px"
+                        });
+                        $("#modifEmployee").append(successBox);
+                    } else {
+                      var errorMessage = response.status_message ;
+                      var errorBox = $("<div>").text(errorMessage).css({
+                        "background-color": "red",
+                        "color": "white",
+                        "padding": "10px",
+                        "margin": "10px"
+                      });
+                      $("#modifEmployee").append(errorBox);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Erreur lors de la requête AJAX :", textStatus, errorThrown);
+                }
+            });
+    
+    
+        });
+    
+    
+        </script>
+
+
+        <div class="tab-pane fade" id="products-tab-pane" role="tabpanel" aria-labelledby="products-tab" tabindex="0">
+
+          <br><div class="container">
+            <div class="card">
+              <div class="container">
+              <br><h3><b>Search one product detail(s) by ID</b></h3>
+              <br><div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">ID</span>
+                <input type="text" class="form-control" id="idProduct" aria-label="id" aria-describedby="basic-addon1">
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchProduct" value="product_name">
+                <label class="form-check-label" for="inlineRadio1">Product name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchProduct" value="brand">
+                <label class="form-check-label" for="inlineRadio1">Brand name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchProduct" value="category">
+                <label class="form-check-label" for="inlineRadio1">Category name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchProduct" value="model_year">
+                <label class="form-check-label" for="inlineRadio1">Model year</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchProduct" value="list_price">
+                <label class="form-check-label" for="inlineRadio1">Price</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchProduct" value="all" checked>
+                <label class="form-check-label" for="inlineRadio1">All details</label>
+              </div>
+              <br><button type="button" class="btn btn-link" id="resetButton">Reset</button>
+              <button type="button" class="btn btn-link" id="searchProduct">Search</button>
+              <div id="resultProduct"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <br>
+      <div class="container">
+        <div class="card">
+          <div class="container">
+          <br><h3><b>Sort by </b></h3>
+
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="radioSort2" value="product_name">
+              <label class="form-check-label" for="inlineRadio1">Product name</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="radioSort2" value="brand">
+              <label class="form-check-label" for="inlineRadio2">Brand name</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="radioSort2" value="category">
+              <label class="form-check-label" for="inlineRadio1">Category name</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="radioSort2" value="model_year">
+              <label class="form-check-label" for="inlineRadio2">Model year</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="radioSort2" value="list_price">
+              <label class="form-check-label" for="inlineRadio1">List price</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="radioSort2" value="product_id" checked>
+              <label class="form-check-label" for="inlineRadio1">Default</label>
+            </div>
+
+          <div class="container">
+              <div class="form-check">
+                <div>
+                  <hr><input class="form-check-input" type="radio" name="radioOrder2" value="ASC" id="ASC" checked>
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    Ascending order
+                  </label>
+                </div>
+                <div>
+                  <input class="form-check-input" type="radio" name="radioOrder2" id="DESC" value="DESC">
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    Descending order
+                  </label>
+                </div>
+                <button type="button" class="btn btn-link" id="resetButton2">Reset</button>
+                <button type="button" class="btn btn-link" id="sortBy">Apply</button>
+              </div>
+              <div id="SortBox2"></div>
+            </div>
+          </div>
+          </div>
+        </div><br><br>
+
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  All products
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  <p><a class="link-opacity-100" href="#new-product">Insertion, modification and deletion</a></p>
+
+
+                  <div class="container">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th scope="col">Product name</th>
+                          <th scope="col">Brand</th>
+                          <th scope="col">Category</th>
+                          <th scope="col">Model year</th>
+                          <th scope="col">Price</th>
+                        </tr>
+                      </thead>
+                      <tbody id="productsTable">
+                    </table>
+                  </div>
+                  <br><button type="button" class="btn btn-primary" id="previousButton">Previous</button>
+                  <button type="button" class="btn btn-primary" id="nextButton">Next</button><br><br>
+                </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  In my assigned store
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <br><br><p><a class="link-opacity-100" href="#new-product">Insertion, modification and deletion</a></p>
+
+                  <div class="container">
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="container" id="new-product">
+            <div class="row g-2">
+              <div class="col-md">
+                <div class="form-floating">
+                  <input type="text" class="form-control">
+                  <label for="floatingInputGrid">Product ID</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control">
+                  <label for="floatingInputGrid">Product name</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control">
+                  <label for="floatingInputGrid">Brand</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control">
+                  <label for="floatingInputGrid">Category</label>
+                </div>
+                <div class="form-floating">
+                  <input type="number" class="form-control">
+                  <label for="floatingInputGrid">Model year</label>
+                </div>
+                <div class="form-floating">
+                  <input type="number" class="form-control">
+                  <label for="floatingInputGrid">Price</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br><button type="button" class="btn btn-primary disabled" id="putProduct">!=</button>
+          <button type="button" class="btn btn-primary disabled" id="addProduct">+</button>
+          <button type="button" class="btn btn-secondary disabled" id="delProduct">-</button>
+          <br><div id="ModifBoxProduct"></div>
+        </div>
+        
+        <div class="tab-pane fade" id="brands-tab-pane" role="tabpanel" aria-labelledby="brands-tab" tabindex="0">
+          
+          <br><strong>Brand panel</strong>
+          <br><br><p><a class="link-opacity-100" href="#new-brand">Insertion, modification and deletion</a></p>
+
+          <br><div class="container">
+            <div class="card">
+              <div class="container">
+              <br><h3><b>Search one brand detail(s) by ID</b></h3>
+              <br><div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">ID</span>
+                <input type="text" class="form-control" placeholder="1" aria-label="id" aria-describedby="basic-addon1" id="idBrand">
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchBrand" value="brand_name">
+                <label class="form-check-label" for="inlineRadio1">Brand name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchBrand" value="all" checked>
+                <label class="form-check-label" for="inlineRadio1">All details</label>
+              </div>
+              <br><button type="button" class="btn btn-link" id="resetButton2">Reset</button>
+              <button type="button" class="btn btn-link" id="searchBrand">Search</button>
+              <div id="resultBrand"></div>
+  
+          </div>
+        </div>
+  
+        <br>
+        <div class="container">
+          <div class="card">
+            <div class="container">
+            <br><h3><b>Sort by </b></h3>
+            
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="radioSort" id="brand_name" value="brand_name">
+              <label class="form-check-label" for="inlineRadio1">Brand name</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="radioSort" id="brand_id" value="brand_id" checked>
+              <label class="form-check-label" for="inlineRadio1">Default</label>
+            </div>
+    
+              <div class="container">
+                <div class="form-check">
+                  <div>
+                    <hr><input class="form-check-input" type="radio" name="radioOrder" id="ASC" value="ASC" checked>
+                    <label class="form-check-label" for="flexRadioDefault1">
+                      Ascending order
+                    </label>
+                  </div>
+                  <div>
+                    <input class="form-check-input" type="radio" name="radioOrder" id="DESC" value="DESC">
+                    <label class="form-check-label" for="flexRadioDefault2">
+                      Descending order
+                    </label>
+                  </div>
+                  <button type="button" class="btn btn-link" id="resetButton">Reset</button>
+                  <button type="button" class="btn btn-link" id="sortBy">Apply</button>
+                </div>
+                <div id="SortBox"></div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+
+          <br><br><div class="container">
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Brand ID</th>
+                    <th scope="col">Brand name</th>
+                  </tr>
+                </thead>
+                <tbody id="brandsTable">
+                </tbody>
+              </table>
+            </div>
+        
+
+          <br>
+          <div class="container" id="new-brand">
+            <div class="row g-2">
+              <div class="col-md">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="updateIDBrand">
+                  <label for="floatingInputGrid">Brand ID</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="newBrandName">
+                  <label for="floatingInputGrid">Brand name</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br><button type="button" class="btn btn-primary" id="putBrand">!=</button>
+          <button type="button" class="btn btn-primary" id="addBrand">+</button>
+          <button type="button" class="btn btn-secondary" id="delBrand">-</button>
+          <br><div id="ModifBoxBrand"></div>
+                   
+        </div>
+        
+        <div class="tab-pane fade" id="categories-tab-pane" role="tabpanel" aria-labelledby="categories-tab" tabindex="0">
+          
+          <br><div class="container">
+            <strong>Category panel</strong>
+            <br><br><p><a class="link-opacity-100" href="#new-category">Insertion, modification and deletion</a></p>
+
+
+          <br><div class="container">
+            <div class="card">
+              <div class="container">
+              <br><h3><b>Search one category detail(s) by ID</b></h3>
+              <br><div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">ID</span>
+                <input type="text" class="form-control" id="idCategory" aria-label="id" aria-describedby="basic-addon1">
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchCategory" value="category_name">
+                <label class="form-check-label" for="inlineRadio1">Category name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchCategory" value="all" checked>
+                <label class="form-check-label" for="inlineRadio1">All details</label>
+              </div>
+              <br><button type="button" class="btn btn-link" id="resetButtonCat">Reset</button>
+              <button type="button" class="btn btn-link" id="searchCategory">Search</button>
+              <div id="resultCategory"></div>
+          </div>
+        </div>
+  
+          <br>
+          <div class="container">
+            <div class="card">
+              <div class="container">
+              <br><h3><b>Sort by </b></h3>
+             
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortCategory" value="category_name">
+                <label class="form-check-label" for="inlineRadio1">Category name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortCategory" value="category_id" checked>
+                <label class="form-check-label" for="inlineRadio1">Default</label>
+              </div>
+
+              <div class="container">
+                <div class="form-check">
+                  <div>
+                    <br><input class="form-check-input" type="radio" name="orderCat" value="ASC" checked>
+                    <label class="form-check-label" for="flexRadioDefault1">
+                      Ascending order
+                    </label>
+                  </div>
+                  <div>
+                    <input class="form-check-input" type="radio" name="orderCat" value="DESC">
+                    <label class="form-check-label" for="flexRadioDefault2">
+                      Descending order
+                    </label>
+                  </div>
+                  <button type="button" class="btn btn-link" id="resetButton2Cat">Reset</button>
+                  <button type="button" class="btn btn-link" id="sortByCat">Apply</button>
+                </div>
+                <div id="SortBoxCategories"></div>
+              </div>
+            </div>
+          </div>
+          </div>
+          </div>
+            <br><br>
+
+            <br><table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Category ID</th>
+                  <th scope="col">Category name</th>
+                </tr>
+              </thead>
+              <tbody id="categoriesTable"></table>
+          </div>
+          <br>
+          <div class="container" id="new-category">
+            <div class="row g-2">
+              <div class="col-md">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="updateIDCategory">
+                  <label for="floatingInputGrid">Category ID</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="newCategoryName">
+                  <label for="floatingInputGrid">Category name</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br><button type="button" class="btn btn-primary" id="putCategory">!=</button>
+          <button type="button" class="btn btn-primary" id="addCategory">+</button>
+          <button type="button" class="btn btn-secondary" id="delCategory">-</button>
+          <br><div id="ModifBoxCategory"></div>
+        </div>
+        <div class="tab-pane fade" id="stores-tab-pane" role="tabpanel" aria-labelledby="stores-tab" tabindex="0">
+        
+
+          <br><div class="container">
+            <strong>Store panel</strong><br><a href="index.html">Link to stores map</a>
+            <br><br><p><a class="link-opacity-100" href="#new-store">Insertion, modification and deletion</a></p>
+
+
+        <div class="container">
+          <br><div class="container">
+            <div class="card">
+              <div class="container">
+              <br><h3><b>Search one store detail(s) by ID</b></h3>
+              <br><div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">ID</span>
+                <input type="text" class="form-control" placeholder="1" aria-label="id" aria-describedby="basic-addon1" id="idStore">
+              </div>
+              
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchStore" value="store_name">
+                <label class="form-check-label" for="inlineRadio1">Store name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchStore" value="phone">
+                <label class="form-check-label" for="inlineRadio1">Phone</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchStore" value="email">
+                <label class="form-check-label" for="inlineRadio1">Email</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchStore" value="street">
+                <label class="form-check-label" for="inlineRadio1">Street</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchStore" value="city">
+                <label class="form-check-label" for="inlineRadio1">City</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchStore" value="state">
+                <label class="form-check-label" for="inlineRadio1">State</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchStore" value="zip_code">
+                <label class="form-check-label" for="inlineRadio1">Zip code</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchStore" value="all" checked>
+                <label class="form-check-label" for="inlineRadio1">Default</label>
+              </div>
+
+              <br><button type="button" class="btn btn-link" id="resetButtonStore">Reset</button>
+              <button type="button" class="btn btn-link" id="searchStore">Search</button>
+              <div id="resultStore"></div>
+            </div>
+          </div>
+        </div>
+
+          <br>
+          <div class="container">
+            <div class="card">
+              <div class="container">
+              <br><h3><b>Sort by </b></h3>
+
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortStore" value="store_name">
+                <label class="form-check-label" for="inlineRadio1">Store name</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortStore" value="phone">
+                <label class="form-check-label" for="inlineRadio1">Phone</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortStore" value="email">
+                <label class="form-check-label" for="inlineRadio1">Email</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortStore" value="street">
+                <label class="form-check-label" for="inlineRadio1">Street</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortStore" value="city">
+                <label class="form-check-label" for="inlineRadio1">City</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortStore" value="state">
+                <label class="form-check-label" for="inlineRadio1">State</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortStore" value="zip_code">
+                <label class="form-check-label" for="inlineRadio1">Zip code</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="radioSortStore" value="store_id" checked>
+                <label class="form-check-label" for="inlineRadio1">Default</label>
+              </div>
+
+              <div class="container">
+                <div class="form-check">
+                  <div>
+                    <br><input class="form-check-input" type="radio" name="orderStore" value="ASC" checked>
+                    <label class="form-check-label" for="flexRadioDefault1">
+                      Ascending order
+                    </label>
+                  </div>
+                  <div>
+                    <input class="form-check-input" type="radio" name="orderStore" value="DESC">
+                    <label class="form-check-label" for="flexRadioDefault2">
+                      Descending order
+                    </label>
+                  </div>
+                  <button type="button" class="btn btn-link" id="resetButton2Store">Reset</button>
+                  <button type="button" class="btn btn-link" id="sortByStore">Apply</button>
+                </div>
+                <div id="SortBoxStores"></div>
+              </div>
+            </div>
+          </div>
+          </div>
+          </div>
+            <br><br>
+
+            <br><table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Store ID</th>
+                  <th scope="col">Store name</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Street</th>
+                  <th scope="col">City</th>
+                  <th scope="col">State</th>
+                  <th scope="col">Zip code</th>
+                </tr>
+              </thead>
+              <tbody id="storesTable"></tbody>
+            </table>
+
+          <br>
+          <div class="container" id="new-store">
+            <div class="row g-2">
+              <div class="col-md">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="updateIDStore">
+                  <label for="floatingInputGrid">Store ID</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="newStoreName">
+                  <label for="floatingInputGrid">Store name</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="newPhoneStore">
+                  <label for="floatingInputGrid">Phone</label>
+                </div>
+                <div class="form-floating"> 
+                  <input type="email" class="form-control" id="newStoreEmail">
+                  <label for="floatingInputGrid">Email</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="newStoreStreet">
+                  <label for="floatingInputGrid">Street</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="newStoreCity">
+                  <label for="floatingInputGrid">City</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="newStoreState">
+                  <label for="floatingInputGrid">State</label>
+                </div>
+                <div class="form-floating">
+                  <input type="number" class="form-control" id="newStoreCode">
+                  <label for="floatingInputGrid">Zip code</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br><button type="button" class="btn btn-primary" id="putStore">!=</button>
+          <button type="button" class="btn btn-primary" id="addStore">+</button>
+          <button type="button" class="btn btn-secondary" id="delStore">-</button>
+          <br><div id="ModifBoxStore"></div>
+        </div>
+        </div>
+        <div class="tab-pane fade" id="stocks-tab-pane" role="tabpanel" aria-labelledby="stocks-tab" tabindex="0">
+          
+          <br><strong>Stock DISABLED</strong>
+          
+        </div>
+        <div class="tab-pane fade" id="employees-tab-pane" role="tabpanel" aria-labelledby="employees-tab" tabindex="0">
+         
+          <br><strong>Employee DISABLED </strong>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <br><br><br>
+  <div class="grid text-center">
+    <!-- Footer -->
+    <div class="container">
+      <hr><br>
+      <footer class="site-footer">
+          <div class="container">
+          <div class="row">
+              <div class="col-sm-12 col-md-6">
+              <h6>About</h6>
+              <p class="text-justify">Matéï Biaou ... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Veniam alias inventore, aliquid iure, quasi voluptates voluptatem distinctio explicabo qui voluptatibus tempora consequatur saepe ratione mollitia. Impedit error ipsa officia neque.</p>
+              </div>
+  
+              <div class="col-xs-6 col-md-3">
+              <h6>Quick Links</h6>
+              <ul class="footer-links">
+                  <li><a href="#">Web host</a></li>
+                  <li><a href="#">Repository Github of web service</a></li>
+                  <li><a href="#">Repository Github of website</a></li>
+                  <li><a href="legal.html">Legal notices</a></li>
+              </ul>
+              </div>
+          </div>
+        </div>
+        <br><br>
+      </footer>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+
+
+    
+</body>
+</html>
